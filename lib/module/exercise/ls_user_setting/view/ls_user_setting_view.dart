@@ -54,6 +54,51 @@ class LsUserSettingView extends StatefulWidget {
               Jika perubahan yang kamu lakukan tidak mempengarungi
               Switch yang lainnya, maka task ini selesai!
               */
+              SwitchListTile(
+                value: mainStorage.get("dark_mode") ?? true,
+                title: const Text("Dark mode"),
+                onChanged: (value) {
+                  var current = mainStorage.get("dark_mode") ?? true;
+                  mainStorage.put("dark_mode", !current);
+                  controller.setState(() {});
+                },
+              ),
+              SwitchListTile(
+                value: mainStorage.get("login_as_admin") ?? false,
+                title: const Text("Login As admin"),
+                onChanged: (value) {
+                  var current = mainStorage.get("login_as_admin") ?? false;
+                  mainStorage.put("login_as_admin", !current);
+                  controller.setState(() {});
+                },
+              ),
+              SwitchListTile(
+                value: mainStorage.get("experimental_mode") ?? true,
+                title: const Text("Experimental As admin"),
+                onChanged: (value) {
+                  var current = mainStorage.get("experimental_mode") ?? true;
+                  mainStorage.put("experimental_mode", !current);
+                  controller.setState(() {});
+                },
+              ),
+              SwitchListTile(
+                value: mainStorage.get("offline_mode") ?? false,
+                title: const Text("Offline Mode"),
+                onChanged: (value) {
+                  var current = mainStorage.get("offline_mode") ?? false;
+                  mainStorage.put("offline_mode", !current);
+                  controller.setState(() {});
+                },
+              ),
+              SwitchListTile(
+                value: mainStorage.get("cache_mode") ?? true,
+                title: const Text("Cache Mode"),
+                onChanged: (value) {
+                  var current = mainStorage.get("cache_mode") ?? true;
+                  mainStorage.put("cache_mode", !current);
+                  controller.setState(() {});
+                },
+              ),
             ],
           ),
         ),

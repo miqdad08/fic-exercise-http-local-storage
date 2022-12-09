@@ -24,6 +24,8 @@ class LsPosController extends State<LsPosView> implements MvcController {
   Faker faker = Faker.instance;
   loadProductList() async {
     ready = true;
+    productList = mainStorage.get("products") ?? [];
+    setState(() {});
     /*
     TODO: --
     1. Ok, baca storage "products" dan masukkan ke dalam List
@@ -37,11 +39,11 @@ class LsPosController extends State<LsPosView> implements MvcController {
     Jika belum tambahkan di ProductCRUD (tasks sebelumnya)
     Cukup tambahkan 5 saja
     */
-    productList = mainStorage.get("products") ?? [];
-    setState(() {});
   }
 
   increaseQty(item) {
+    item["qty"]++;
+    setState(() {});
     /*
     4. Tambahkan qty dari item dengan klik tombol add
     gunakan kode ini:
@@ -50,27 +52,32 @@ class LsPosController extends State<LsPosView> implements MvcController {
     setState(() {});
     ###
     */
-    item["qty"]++;
-    setState(() {});
   }
 
   decreaseQty(item) {
+    if (item["qty"] == 0) return;
+    item["qty"]--;
+    setState(() {});
     /*
     5. Kurangi qty dari item, dengan klik tombol minus
     gunakan kode ini:
     ###
-    if (item["qty"] == 0) return;
     item["qty"]--;
     setState(() {});
     ###
     */
-    if (item["qty"] == 0) return;
-    item["qty"]--;
-    setState(() {});
   }
 
   double get total {
     var itemTotal = 0.0;
+    var product = productList[1];
+    int qty = product["qty"] ?? 0;
+    double price = product["price"] ?? 0.0;
+    itemTotal += qty * price;
+    // for (var i = 0; i < productList.length; i++) {
+    //   var product = productList[i];
+    //   itemTotal += product["qty"] * product["price"];
+    // }
     /*
     6. Yuk hitung total product-nya,
     Gunakan looping seperti dibawah ini:
@@ -81,10 +88,6 @@ class LsPosController extends State<LsPosView> implements MvcController {
     }
     ###
     */
-    for (var i = 0; i < productList.length; i++) {
-      var product = productList[i];
-      itemTotal += product["qty"] + product["price"];
-    }
     return itemTotal;
   }
 
@@ -96,6 +99,16 @@ class LsPosController extends State<LsPosView> implements MvcController {
   }
 
   checkout() async {
+    Map order = {
+      "created_at": DateTime.now(),
+      "customer": "-",
+      "payment_method": "Cash",
+      "total": total,
+      "items": productList,
+    };
+    List orders = await mainStorage.get("orders") ?? [];
+    orders.add(order);
+    mainStorage.put("orders", orders);
     /*
     7. Yuk kita checkout pos-nya dengan konsep master-detail
     Kita akan perlu sebuah Map, yang akan berisi detail order
@@ -124,17 +137,6 @@ class LsPosController extends State<LsPosView> implements MvcController {
     Lalu klik checkout, jika alert Your Order is Complete muncul,
     Maka task kamu sudah selesai!
     */
-    Map order = {
-      "created_at": DateTime.now(),
-      "customer": "-",
-      "payment_method": "Cash",
-      "total": total,
-      "items": productList,
-    };
-
-    List orders = await mainStorage.get("orders") ?? [];
-    orders.add(order);
-    mainStorage.put("orders", orders);
 
     emptyCart();
     await showInfoDialog("Your order is complete!");
